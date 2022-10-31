@@ -17,6 +17,12 @@
     "@mui/lab": "^5.0.0-alpha.105",
     "@mui/material": "^5.10.11",
     "@mui/system": "^5.10.10",
+    "@solana/wallet-adapter-base": "^0.9.18",
+    "@solana/wallet-adapter-material-ui": "^0.16.19",
+    "@solana/wallet-adapter-react": "^0.15.23",
+    "@solana/wallet-adapter-react-ui": "^0.9.21",
+    "@solana/wallet-adapter-wallets": "^0.19.5",
+    "bs58": "^5.0.0",
     "next": "13.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -24,7 +30,8 @@
     "react-redux": "^8.0.4",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
-    "redux-thunk": "^2.4.1"
+    "redux-thunk": "^2.4.1",
+    "socket.io-client": "^4.5.3"
   },
   "devDependencies": {
     "@types/node": "18.11.8",
