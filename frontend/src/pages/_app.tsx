@@ -1,35 +1,47 @@
-import React from "react";
-import { AppProps } from "next/app";
+import type { AppProps } from 'next/app';
+import { Toaster } from 'react-hot-toast';
+import { CacheProvider } from '@emotion/react';
+import { StyledEngineProvider } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-//import { ToastContainer } from 'react-toastify';
-// import "@solana/wallet-adapter-ant-design/styles.css";
-//import "@solana/wallet-adapter-react-ui/styles.css";
-//import "../styles/globals.css";
+import { createEmotionCache } from '../utils/create-emotion-cache';
 import { createTheme } from '../theme';
-import { ContextProvider } from "../contexts/ContextProvider";
+import { ContextProvider } from '../contexts/ContextProvider';
+import "@solana/wallet-adapter-react-ui/styles.css";
 
+const clientSideEmotionCache = createEmotionCache();
 
-const App = (props: AppProps) => {
+interface MyAppProps {
+  Component: AppProps['Component'] & {
+    getLayout: (children: any) => any;
+  };
+  pageProps: AppProps['pageProps'];
+}
+
+const App = (props: MyAppProps) => {
   const { Component, pageProps } = props;
 
-  const getLayout = Component['getLayout'] ?? ((page) => page);
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <ThemeProvider
-      theme={createTheme({
-        direction: 'ltr',
-        responsiveFontSizes: true,
-        mode: 'light',
-      })}
-    >
-      <CssBaseline />
-      {/* <ToastContainer position="top-center" hideProgressBar/> */}
-      <ContextProvider>
-        {getLayout(<Component {...pageProps} />)}
-      </ContextProvider>
-    </ThemeProvider>
+    <CacheProvider value={clientSideEmotionCache}>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider
+          theme={createTheme({
+            direction: 'ltr',
+            responsiveFontSizes: true,
+            mode: 'dark',
+          })}
+        >
+          <CssBaseline />
+          <Toaster position="top-center" />
+          <ContextProvider>
+            {getLayout(<Component {...pageProps} />)}
+          </ContextProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
+    </CacheProvider>
   );
-}
+};
 
 export default App;
