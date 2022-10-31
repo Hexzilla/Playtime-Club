@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import bs58 from 'bs58';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Box, Button, Card, CardContent, Container } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Grid } from '@mui/material';
 import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from '../../components/play/dashboard-layout';
@@ -133,9 +133,32 @@ const Play = () => {
           </Card>
           <Card sx={{ mt: 3 }}>
             <CardContent>
-              <Button type="submit" variant="contained" onClick={handleJoin}>
-                {'Sign & Join'}
-              </Button>
+              <Grid container spacing={3}>
+                <Grid item sm={8} xs={12}>
+                  <p>Playtime</p>
+                  <p>You need an SOL Playtime.club NFT to play. Buy Here</p>
+                </Grid>
+                <Grid item sm={2} xs={6}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    onClick={handleJoin}
+                  >
+                    {'Detail'}
+                  </Button>
+                </Grid>
+                <Grid item sm={2} xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    onClick={handleJoin}
+                  >
+                    {'Join'}
+                  </Button>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
           <Card sx={{ mt: 3 }}>

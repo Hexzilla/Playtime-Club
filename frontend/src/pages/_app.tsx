@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { createEmotionCache } from '../utils/create-emotion-cache';
 import { createTheme } from '../theme';
 import { ContextProvider } from '../contexts/ContextProvider';
+import "@solana/wallet-adapter-react-ui/styles.css";
 
 const clientSideEmotionCache = createEmotionCache();
 
