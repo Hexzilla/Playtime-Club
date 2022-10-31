@@ -1,10 +1,11 @@
 import React from "react";
 import { AppProps } from "next/app";
 import { ThemeProvider } from '@mui/material/styles';
-import { ToastContainer } from 'react-toastify';
-import "@solana/wallet-adapter-ant-design/styles.css";
-import "@solana/wallet-adapter-react-ui/styles.css";
-import "../styles/globals.css";
+import CssBaseline from '@mui/material/CssBaseline';
+//import { ToastContainer } from 'react-toastify';
+// import "@solana/wallet-adapter-ant-design/styles.css";
+//import "@solana/wallet-adapter-react-ui/styles.css";
+//import "../styles/globals.css";
 import { createTheme } from '../theme';
 import { ContextProvider } from "../contexts/ContextProvider";
 
@@ -19,10 +20,11 @@ const App = (props: AppProps) => {
       theme={createTheme({
         direction: 'ltr',
         responsiveFontSizes: true,
-        mode: 'dark',
+        mode: 'light',
       })}
     >
-      <ToastContainer position="top-center" hideProgressBar/>
+      <CssBaseline />
+      {/* <ToastContainer position="top-center" hideProgressBar/> */}
       <ContextProvider>
         {getLayout(<Component {...pageProps} />)}
       </ContextProvider>

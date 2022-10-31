@@ -2,25 +2,25 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import bs58 from "bs58";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Box, Button, Card, CardContent, Container } from "@mui/material";
+import { Box, Button, Card, CardContent, Container, Grid } from "@mui/material";
 import { io } from "socket.io-client";
-import { Unity, useUnityContext } from "react-unity-webgl";
+//import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from "../../components/play/dashboard-layout";
 import useInterval from "hooks/useInterval";
 
 const socket = io("http://localhost:8000");
 
-const unityConfig = {
-  loaderUrl: "Build/public.loader.js",
-  dataUrl: "Build/public.data",
-  frameworkUrl: "Build/public.framework.js",
-  codeUrl: "Build/public.wasm",
-};
+// const unityConfig = {
+//   loaderUrl: "Build/public.loader.js",
+//   dataUrl: "Build/public.data",
+//   frameworkUrl: "Build/public.framework.js",
+//   codeUrl: "Build/public.wasm",
+// };
 
 const Play = () => {
   const wallet = useWallet();
-  const unityContext = useUnityContext(unityConfig);
-  const { sendMessage, addEventListener, removeEventListener } = unityContext;
+  //const unityContext = useUnityContext(unityConfig);
+  //const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const [displayBanner, setDisplayBanner] = useState(true);
   const [isConnected, setIsConnected] = useState(socket?.connected);
 
@@ -121,21 +121,42 @@ const Play = () => {
         <Container maxWidth="lg">
           <Card>
             <CardContent sx={{ display: "flex", justifyContent: "center" }}>
-              <Unity
+              {/* <Unity
                 unityProvider={unityContext.unityProvider}
                 style={{
                   height: 540,
                   width: 950,
                   background: "#555",
                 }}
-              />
+              /> */}
             </CardContent>
           </Card>
           <Card sx={{ mt: 3 }}>
             <CardContent>
-              <Button type="submit" variant="contained" onClick={handleJoin}>
-                {"Sign & Join"}
-              </Button>
+              <Grid container spacing={3}>
+                <Grid item md={2} xs={12}>
+                  <Box sx={{ mt: 2 }}>
+                    <Button
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                    >
+                      Detail
+                    </Button>
+                  </Box>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    onClick={handleJoin}
+                  >
+                    Join
+                  </Button>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
           <Card sx={{ mt: 3 }}>
