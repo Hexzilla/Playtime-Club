@@ -120,7 +120,8 @@ const Play = () => {
       >
         <Container maxWidth="lg">
           <Card>
-            <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CardContent sx={{ display: 'flex', justifyContent: 'center', minHeight: '540px' }}>
+              Unity Component
               {/* <Unity
                 unityProvider={unityContext.unityProvider}
                 style={{
