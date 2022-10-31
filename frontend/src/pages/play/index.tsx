@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import bs58 from 'bs58';
+import toast from 'react-hot-toast';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Box, Button, Card, CardContent, Container, Grid } from '@mui/material';
 import { io } from 'socket.io-client';
@@ -21,45 +22,39 @@ const Play = () => {
   const wallet = useWallet();
   //const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
-  const [displayBanner, setDisplayBanner] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [playerId, setPlayerId] = useState(null);
   const [isConnected, setIsConnected] = useState(socket?.connected);
 
   useEffect(() => {
-    // Restore the persistent state from local/session storage
-    const value = globalThis.sessionStorage.getItem('dismiss-banner');
-    if (value === 'true') {
-      // setDisplayBanner(false);
-    }
+    socket.on('connect', () => {
+      console.log('connected');
+      setIsConnected(true);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('disconnected');
+      setIsConnected(false);
+    });
+
+    socket.on('PONG', () => {
+      console.log('PONG');
+    });
+
+    socket.on('JOIN_SUCCESS', onJoinRoom);
+
+    socket.connect();
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('PONG');
+      socket.off('JOIN_SUCCESS');
+    };
   }, []);
 
-  useEffect(() => {
-    if (socket) {
-      socket.on('connect', () => {
-        console.log('connected');
-        setIsConnected(true);
-      });
-
-      socket.on('disconnect', () => {
-        console.log('disconnected');
-        setIsConnected(false);
-      });
-
-      socket.on('PONG', () => {
-        console.log('PONG');
-      });
-
-      socket.connect();
-
-      return () => {
-        socket.off('connect');
-        socket.off('disconnect');
-        socket.off('PONG');
-      };
-    }
-  }, [socket]);
-
   const sendPing = () => {
-    if (socket && isConnected) {
+    if (isConnected) {
       socket.emit('PING');
     }
   };
@@ -67,12 +62,24 @@ const Play = () => {
   useInterval(() => {
     sendPing();
   }, 5000);
+  
+  const onJoinRoom = (playerId) => {
+    console.log('onJoinRoom', playerId, submitting)
+    setPlayerId(playerId);
+    setSubmitting(false);
+    toast.success('You has been joined successfully')
+  };
 
   const handleJoin = async () => {
     try {
       const publicKey = wallet.publicKey;
       if (!publicKey) {
-        console.log('No key associated with the wallet');
+        toast.error('No key associated with the wallet');
+        return;
+      }
+
+      if (!isConnected) {
+        toast.error('Cannot connect server!');
         return;
       }
 
@@ -88,21 +95,27 @@ const Play = () => {
         return;
       }
 
+      setSubmitting(true);
+
       const signed = await wallet.signMessage(encoder.encode(plainText));
       console.log('signature', signed);
 
       const signature = bs58.encode(signed);
       console.log('signed_message', signature);
 
-      if (isConnected) {
-        const message = {
-          address: publicKey.toString(),
-          signature,
-        };
+      const message = {
+        address: publicKey.toString(),
+        signature,
+      };
+
+      setTimeout(() => {
         socket?.emit('JOIN', message);
-      }
+      }, 1);
+
     } catch (err) {
       console.error(err);
+      setSubmitting(false);
+      toast.error('Something went wrong!');
     }
   };
 
@@ -141,17 +154,18 @@ const Play = () => {
                 </Grid>
                 <Grid item sm={2} xs={6}>
                   <Button
-                    type="submit"
+                    disabled={submitting}
+                    type="button"
                     variant="contained"
                     size="large"
-                    onClick={handleJoin}
                   >
                     {'Detail'}
                   </Button>
                 </Grid>
                 <Grid item sm={2} xs={12}>
                   <Button
-                    type="submit"
+                    disabled={submitting || !!playerId}
+                    type="button"
                     variant="contained"
                     size="large"
                     onClick={handleJoin}

@@ -1,6 +1,7 @@
+import { sign } from 'tweetnacl';
+import { uuid } from 'uuidv4';
 import { Player } from "./types";
 import * as roomService from "./room";
-import { sign } from 'tweetnacl';
 
 const clients: Player[] = [];
 const clientLookup = {};
@@ -14,7 +15,7 @@ const server = (socket: any) => {
   const player: Player = {} as Player;
 
   socket.on("PING", function () {
-    console.log(`Message from user#${socket.id}`);
+    console.log(`Ping Message from user #${socket.id}`);
 
     /// Emit back to NetworkManager in Unity by client.js script
     socket.emit("PONG", socket.id);
@@ -86,11 +87,18 @@ const server = (socket: any) => {
     console.log("[INFO] JOIN received !!! ", msg);
 
     const player = {
+      id: uuid(),
       address: msg.address,
+      socketId: socket.id,
     } as Player;
 
     const room = roomService.createRoom();
     room.players.push(player);
+
+    socket.emit(
+      "JOIN_SUCCESS",
+      player.id,
+    );
   });
 
   socket.on("RESPAWN", function (msg) {
