@@ -11,8 +11,8 @@ import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
 import { RootState } from 'store';
 import { setLoading, setPlayerId } from 'slices/play';
-import TezosBoard from './TezosBoard';
-import SolanaBoard from './SolanaBoard';
+import TezosBoard from '../../components/play/playtime-tezos';
+import SolanaBoard from '../../components/play/playtime-solana';
 
 const socket = io('http://localhost:8000');
 
