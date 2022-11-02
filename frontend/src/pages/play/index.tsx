@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
 import bs58 from 'bs58';
 import toast from 'react-hot-toast';
@@ -8,6 +9,8 @@ import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
+import { RootState } from "store";
+import { setPlayerId } from 'slices/play';
 
 const socket = io('http://localhost:8000');
 
@@ -19,12 +22,13 @@ const socket = io('http://localhost:8000');
 // };
 
 const Play = () => {
+  const dispatch = useDispatch();
   const wallet = useWallet();
   //const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const [submitting, setSubmitting] = useState(false);
-  const [playerId, setPlayerId] = useState(null);
   const [isConnected, setIsConnected] = useState(socket?.connected);
+  const { playerId } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -65,7 +69,7 @@ const Play = () => {
   
   const onJoinRoom = (playerId) => {
     console.log('onJoinRoom', playerId, submitting)
-    setPlayerId(playerId);
+    dispatch(setPlayerId(playerId));
     setSubmitting(false);
     toast.success('You has been joined successfully')
   };
