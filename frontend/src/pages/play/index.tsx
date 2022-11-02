@@ -45,7 +45,11 @@ const Play = () => {
       console.log('PONG');
     });
 
-    socket.on('JOIN_SUCCESS', onJoinRoom);
+    socket.on('JOIN_SUCCESS', (playerId) => {
+      dispatch(setLoading(false));
+      dispatch(setPlayerId(playerId));
+      toast.success('You has been joined successfully');
+    });
 
     socket.connect();
 
@@ -64,13 +68,6 @@ const Play = () => {
   useInterval(() => {
     sendPing();
   }, 5000);
-
-  const onJoinRoom = (playerId) => {
-    console.log('onJoinRoom', playerId, loading);
-    dispatch(setLoading(false));
-    dispatch(setPlayerId(playerId));
-    toast.success('You has been joined successfully');
-  };
 
   return (
     <>

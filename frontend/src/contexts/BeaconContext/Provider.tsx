@@ -64,7 +64,7 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
       setWallet(_wallet);
     };
     createWallet();
-  }, [tezos, networkType]);
+  }, [tezos, wallet, networkType]);
 
   useEffect(() => {
     const getContracts = async () => {
