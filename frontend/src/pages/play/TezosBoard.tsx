@@ -2,21 +2,25 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import bs58 from 'bs58';
 import toast from 'react-hot-toast';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Button, CardContent, Grid } from '@mui/material';
 import { RootState } from 'store';
 import { setLoading } from 'slices/play';
+import useBeacon from 'hooks/useBeacon';
 
 const TezosBoard = ({ socket }) => {
   const dispatch = useDispatch();
-  const wallet = useWallet();
-  const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
+  const { address, connectWallet } = useBeacon();
+  const { loading, connected, playerId } = useSelector(
+    (state: RootState) => state.play
+  );
 
   const handleJoin = async () => {
     try {
-      const publicKey = wallet.publicKey;
-      if (!publicKey) {
-        toast.error('No key associated with the wallet');
+      dispatch(setLoading(true));
+
+      const walletAddress = address ? address : await connectWallet();
+      console.log('walletAddress', address, walletAddress)
+      if (!walletAddress) {
         return;
       }
 
@@ -25,7 +29,7 @@ const TezosBoard = ({ socket }) => {
         return;
       }
 
-      const encoder = new TextEncoder();
+      /*const encoder = new TextEncoder();
       const plainText = JSON.stringify({
         message: 'Join Room',
         address: publicKey.toString(),
@@ -36,8 +40,6 @@ const TezosBoard = ({ socket }) => {
         console.log('Unable to sign using this wallet');
         return;
       }
-
-      dispatch(setLoading(true));
 
       const signed = await wallet.signMessage(encoder.encode(plainText));
       console.log('signature', signed);
@@ -52,7 +54,7 @@ const TezosBoard = ({ socket }) => {
 
       setTimeout(() => {
         socket?.emit('JOIN', message);
-      }, 1);
+      }, 1);*/
     } catch (err) {
       console.error(err);
       dispatch(setLoading(false));
@@ -91,6 +93,6 @@ const TezosBoard = ({ socket }) => {
       </Grid>
     </CardContent>
   );
-}
+};
 
 export default TezosBoard;
