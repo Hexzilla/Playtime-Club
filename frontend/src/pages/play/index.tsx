@@ -10,7 +10,7 @@ import { io } from 'socket.io-client';
 import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
 import { RootState } from "store";
-import { setPlayerId } from 'slices/play';
+import { setLoading, setPlayerId } from 'slices/play';
 
 const socket = io('http://localhost:8000');
 
@@ -26,9 +26,8 @@ const Play = () => {
   const wallet = useWallet();
   //const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
-  const [submitting, setSubmitting] = useState(false);
+  const { loading, playerId } = useSelector((state: RootState) => state.play);
   const [isConnected, setIsConnected] = useState(socket?.connected);
-  const { playerId } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -68,9 +67,9 @@ const Play = () => {
   }, 5000);
   
   const onJoinRoom = (playerId) => {
-    console.log('onJoinRoom', playerId, submitting)
+    console.log('onJoinRoom', playerId, loading)
+    dispatch(setLoading(false));
     dispatch(setPlayerId(playerId));
-    setSubmitting(false);
     toast.success('You has been joined successfully')
   };
 
@@ -99,7 +98,7 @@ const Play = () => {
         return;
       }
 
-      setSubmitting(true);
+      dispatch(setLoading(true));
 
       const signed = await wallet.signMessage(encoder.encode(plainText));
       console.log('signature', signed);
@@ -118,7 +117,7 @@ const Play = () => {
 
     } catch (err) {
       console.error(err);
-      setSubmitting(false);
+      dispatch(setLoading(false));
       toast.error('Something went wrong!');
     }
   };
@@ -158,7 +157,7 @@ const Play = () => {
                 </Grid>
                 <Grid item sm={2} xs={6}>
                   <Button
-                    disabled={submitting}
+                    disabled={loading}
                     type="button"
                     variant="contained"
                     size="large"
@@ -168,7 +167,7 @@ const Play = () => {
                 </Grid>
                 <Grid item sm={2} xs={12}>
                   <Button
-                    disabled={submitting || !!playerId}
+                    disabled={loading || !!playerId}
                     type="button"
                     variant="contained"
                     size="large"
