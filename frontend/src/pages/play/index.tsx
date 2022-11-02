@@ -9,7 +9,7 @@ import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
-import { RootState } from "store";
+import { RootState } from 'store';
 import { setLoading, setPlayerId } from 'slices/play';
 
 const socket = io('http://localhost:8000');
@@ -21,57 +21,10 @@ const socket = io('http://localhost:8000');
 //   codeUrl: "Build/public.wasm",
 // };
 
-const Play = () => {
+const SolanaBoard = () => {
   const dispatch = useDispatch();
   const wallet = useWallet();
-  //const unityContext = useUnityContext(unityConfig);
-  //const { sendMessage, addEventListener, removeEventListener } = unityContext;
-  const { loading, playerId } = useSelector((state: RootState) => state.play);
-  const [isConnected, setIsConnected] = useState(socket?.connected);
-
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected');
-      setIsConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('disconnected');
-      setIsConnected(false);
-    });
-
-    socket.on('PONG', () => {
-      console.log('PONG');
-    });
-
-    socket.on('JOIN_SUCCESS', onJoinRoom);
-
-    socket.connect();
-
-    return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('PONG');
-      socket.off('JOIN_SUCCESS');
-    };
-  }, []);
-
-  const sendPing = () => {
-    if (isConnected) {
-      socket.emit('PING');
-    }
-  };
-
-  useInterval(() => {
-    sendPing();
-  }, 5000);
-  
-  const onJoinRoom = (playerId) => {
-    console.log('onJoinRoom', playerId, loading)
-    dispatch(setLoading(false));
-    dispatch(setPlayerId(playerId));
-    toast.success('You has been joined successfully')
-  };
+  const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
 
   const handleJoin = async () => {
     try {
@@ -81,7 +34,7 @@ const Play = () => {
         return;
       }
 
-      if (!isConnected) {
+      if (!connected) {
         toast.error('Cannot connect server!');
         return;
       }
@@ -114,12 +67,95 @@ const Play = () => {
       setTimeout(() => {
         socket?.emit('JOIN', message);
       }, 1);
-
     } catch (err) {
       console.error(err);
       dispatch(setLoading(false));
       toast.error('Something went wrong!');
     }
+  };
+
+  return (
+    <CardContent>
+      <Grid container spacing={3}>
+        <Grid item sm={8} xs={12}>
+          <div>Playtime</div>
+          <div>You need an SOL Playtime.club NFT to play. Buy Here</div>
+        </Grid>
+        <Grid item sm={2} xs={6}>
+          <Button
+            disabled={loading}
+            type="button"
+            variant="contained"
+            size="large"
+          >
+            {'Detail'}
+          </Button>
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <Button
+            disabled={loading || !!playerId}
+            type="button"
+            variant="contained"
+            size="large"
+            onClick={handleJoin}
+          >
+            {'Join'}
+          </Button>
+        </Grid>
+      </Grid>
+    </CardContent>
+  );
+};
+
+const Play = () => {
+  const dispatch = useDispatch();
+  const wallet = useWallet();
+  //const unityContext = useUnityContext(unityConfig);
+  //const { sendMessage, addEventListener, removeEventListener } = unityContext;
+  const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
+
+  useEffect(() => {
+    dispatch(setLoading(socket.connected));
+
+    socket.on('connect', () => {
+      console.log('connected');
+      dispatch(setLoading(true));
+    });
+
+    socket.on('disconnect', () => {
+      console.log('disconnected');
+      dispatch(setLoading(false));
+    });
+
+    socket.on('PONG', () => {
+      console.log('PONG');
+    });
+
+    socket.on('JOIN_SUCCESS', onJoinRoom);
+
+    socket.connect();
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('PONG');
+      socket.off('JOIN_SUCCESS');
+    };
+  }, []);
+
+  const sendPing = () => {
+    connected && socket.emit('PING');
+  };
+
+  useInterval(() => {
+    sendPing();
+  }, 5000);
+
+  const onJoinRoom = (playerId) => {
+    console.log('onJoinRoom', playerId, loading);
+    dispatch(setLoading(false));
+    dispatch(setPlayerId(playerId));
+    toast.success('You has been joined successfully');
   };
 
   return (
@@ -136,7 +172,13 @@ const Play = () => {
       >
         <Container maxWidth="lg">
           <Card>
-            <CardContent sx={{ display: 'flex', justifyContent: 'center', minHeight: '540px' }}>
+            <CardContent
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                minHeight: '540px',
+              }}
+            >
               Unity Component
               {/* <Unity
                 unityProvider={unityContext.unityProvider}
@@ -149,35 +191,7 @@ const Play = () => {
             </CardContent>
           </Card>
           <Card sx={{ mt: 3 }}>
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item sm={8} xs={12}>
-                  <div>Playtime</div>
-                  <div>You need an SOL Playtime.club NFT to play. Buy Here</div>
-                </Grid>
-                <Grid item sm={2} xs={6}>
-                  <Button
-                    disabled={loading}
-                    type="button"
-                    variant="contained"
-                    size="large"
-                  >
-                    {'Detail'}
-                  </Button>
-                </Grid>
-                <Grid item sm={2} xs={12}>
-                  <Button
-                    disabled={loading || !!playerId}
-                    type="button"
-                    variant="contained"
-                    size="large"
-                    onClick={handleJoin}
-                  >
-                    {'Join'}
-                  </Button>
-                </Grid>
-              </Grid>
-            </CardContent>
+            <SolanaBoard />
           </Card>
           <Card sx={{ mt: 3 }}>
             <CardContent>

@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PlayState {
   loading: boolean;
+  connected: boolean;
   playerId: string | null;
 }
 
 const initialState: PlayState = {
   loading: false,
+  connected: false,
   playerId: null,
 };
 
@@ -17,6 +19,9 @@ const slice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    setConnected(state, action: PayloadAction<boolean>) {
+      state.connected = action.payload;
+    },
     setPlayerId(state, action: PayloadAction<string | null>) {
       state.playerId = action.payload;
     },
@@ -25,4 +30,4 @@ const slice = createSlice({
 
 export const { reducer } = slice;
 
-export const { setLoading, setPlayerId } = slice.actions;
+export const { setLoading, setConnected, setPlayerId } = slice.actions;
