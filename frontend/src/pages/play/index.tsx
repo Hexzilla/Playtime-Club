@@ -149,8 +149,8 @@ const Play = () => {
             <CardContent>
               <Grid container spacing={3}>
                 <Grid item sm={8} xs={12}>
-                  <p>Playtime</p>
-                  <p>You need an SOL Playtime.club NFT to play. Buy Here</p>
+                  <div>Playtime</div>
+                  <div>You need an SOL Playtime.club NFT to play. Buy Here</div>
                 </Grid>
                 <Grid item sm={2} xs={6}>
                   <Button

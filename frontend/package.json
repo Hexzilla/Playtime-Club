@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@airgap/beacon-sdk": "^3.3.0",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
@@ -17,11 +18,14 @@
     "@mui/lab": "^5.0.0-alpha.105",
     "@mui/material": "^5.10.11",
     "@mui/system": "^5.10.10",
+    "@reduxjs/toolkit": "^1.8.6",
     "@solana/wallet-adapter-base": "^0.9.18",
     "@solana/wallet-adapter-material-ui": "^0.16.19",
     "@solana/wallet-adapter-react": "^0.15.23",
     "@solana/wallet-adapter-react-ui": "^0.9.21",
     "@solana/wallet-adapter-wallets": "^0.19.5",
+    "@taquito/beacon-wallet": "^14.0.0",
+    "@taquito/taquito": "^14.0.0",
     "bs58": "^5.0.0",
     "next": "13.0.0",
     "react": "18.2.0",
