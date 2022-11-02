@@ -31,8 +31,6 @@ const Play = () => {
   const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
-    dispatch(setLoading(socket.connected));
-
     socket.on('connect', () => {
       console.log('connected');
       dispatch(setLoading(true));
@@ -57,7 +55,7 @@ const Play = () => {
       socket.off('PONG');
       socket.off('JOIN_SUCCESS');
     };
-  }, []);
+  }, [dispatch]);
 
   const sendPing = () => {
     connected && socket.emit('PING');

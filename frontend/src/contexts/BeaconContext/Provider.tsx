@@ -64,7 +64,7 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
       setWallet(_wallet);
     };
     createWallet();
-  }, [tezos]);
+  }, [tezos, networkType]);
 
   useEffect(() => {
     const getContracts = async () => {
@@ -76,7 +76,7 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
       setContract(contract);
     };
     connected && getContracts();
-  }, [tezos, connected]);
+  }, [tezos, connected, networkType]);
 
   const connectWallet = useCallback(async () => {
     if (wallet) {
@@ -102,7 +102,7 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
     return Promise.resolve(undefined);
-  }, [tezos, wallet, networkType, rpcUrl]);
+  }, [wallet, networkType, rpcUrl]);
 
   const disconnectWallet = async (): Promise<void> => {
     setConnected(false);
