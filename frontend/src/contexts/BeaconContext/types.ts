@@ -7,7 +7,6 @@ export interface BeaconContextApi {
   wallet: BeaconWallet | undefined
   connected: boolean
   address: string | undefined
-  contract: ContractAbstraction<Wallet> | undefined
   rpcUrl: string
   networkType: NetworkType
   connectWallet: () => Promise<string | undefined>

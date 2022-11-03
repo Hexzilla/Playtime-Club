@@ -1,64 +1,64 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import bs58 from 'bs58';
 import toast from 'react-hot-toast';
+import { AbortedBeaconError } from '@airgap/beacon-sdk';
 import { Button, CardContent, Grid } from '@mui/material';
 import { RootState } from 'store';
 import { setLoading } from 'slices/play';
 import useBeacon from 'hooks/useBeacon';
+import { requestSign } from 'utils/tezos-wallet';
 
 const TezosBoard = ({ socket }) => {
   const dispatch = useDispatch();
-  const { address, connectWallet } = useBeacon();
+  const { wallet, address, connectWallet } = useBeacon();
   const { loading, connected, playerId } = useSelector(
     (state: RootState) => state.play
   );
 
   const handleJoin = async () => {
     try {
-      dispatch(setLoading(true));
-
+      // Connect wallet
       const walletAddress = address ? address : await connectWallet();
-      console.log('walletAddress', address, walletAddress)
-      if (!walletAddress) {
+      if (!walletAddress || !wallet) {
+        toast.error('Please connect your wallet')
         return;
       }
 
+      // Check if socket is connected.
       if (!connected) {
         toast.error('Cannot connect server!');
         return;
       }
 
-      /*const encoder = new TextEncoder();
-      const plainText = JSON.stringify({
-        message: 'Join Room',
-        address: publicKey.toString(),
-        date: new Date(),
-      });
+      // Update loading state.
+      dispatch(setLoading(true));
 
-      if (!wallet.signMessage) {
-        console.log('Unable to sign using this wallet');
-        return;
+      const payload: string = [
+        'Tezos Signed Message:',
+        'playtime-tezos.com',
+        new Date().toISOString(),
+        'Join Room',
+        address,
+      ].join(' ');
+
+      const signed = await requestSign(wallet, address!, payload);
+      console.log('signed', signed)
+      if (signed) {
+        const { signature } = signed;
+
+        setTimeout(() => {
+          socket?.emit('JOIN', signature);
+        }, 1);
       }
-
-      const signed = await wallet.signMessage(encoder.encode(plainText));
-      console.log('signature', signed);
-
-      const signature = bs58.encode(signed);
-      console.log('signed_message', signature);
-
-      const message = {
-        address: publicKey.toString(),
-        signature,
-      };
-
-      setTimeout(() => {
-        socket?.emit('JOIN', message);
-      }, 1);*/
     } catch (err) {
       console.error(err);
+      if (err instanceof AbortedBeaconError) {
+        toast.error(err.description);
+      } else {
+        toast.error('Something went wrong!');
+      }
+    } finally {
       dispatch(setLoading(false));
-      toast.error('Something went wrong!');
     }
   };
 

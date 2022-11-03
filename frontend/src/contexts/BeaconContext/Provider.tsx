@@ -1,9 +1,9 @@
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
-import { ContractAbstraction, TezosToolkit, Wallet } from '@taquito/taquito';
+import { TezosToolkit } from '@taquito/taquito';
 import { BeaconWallet } from '@taquito/beacon-wallet';
 import { PermissionScope } from '@airgap/beacon-sdk';
 import { BeaconEvent, defaultEventCallbacks } from '@airgap/beacon-sdk';
-import { Testnet, Mainnet } from 'configs';
+import { Mainnet } from 'configs';
 import { BeaconContextApi } from './types';
 import { useEffect } from 'react';
 
@@ -16,37 +16,30 @@ const scopes: PermissionScope[] = [
   PermissionScope.SIGN,
 ];
 
-type WalletType = ContractAbstraction<Wallet> | undefined;
-
 export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [tezos, setTezos] = useState<TezosToolkit>(
-    new TezosToolkit(Mainnet.RpcUrl)
-  );
+  const [tezos, setTezos] = useState(new TezosToolkit(Mainnet.RpcUrl));
   const [networkType, setNetworkType] = useState(Mainnet.NetworkType);
   const [rpcUrl, setRpcUrl] = useState(Mainnet.RpcUrl);
-  const [wallet, setWallet] = useState<BeaconWallet | undefined>(undefined);
+  const [wallet, setWallet] = useState<BeaconWallet>();
   const [address, setAddress] = useState<string | undefined>(undefined);
   const [connected, setConnected] = useState<boolean>(false);
-  const [contract, setContract] = useState<WalletType>(undefined);
 
   useEffect(() => {
     setAddress(undefined);
     setConnected(false);
-    setContract(undefined);
     setTezos(new TezosToolkit(rpcUrl));
-  }, [rpcUrl, setTezos]);
+  }, [rpcUrl]);
 
   useEffect(() => {
-    const createWallet = async () => {
+    (async () => {
       if (wallet) {
-        await wallet.client.destroy();
-        await wallet.disconnect();
+        await wallet.clearActiveAccount();
       }
 
       const _wallet = new BeaconWallet({
-        name: 'Teo Run',
+        name: 'Playtime-Club',
         preferredNetwork: networkType,
         disableDefaultEvents: true, // Disable all events / UI. This also disables the pairing alert.
         eventHandlers: {
@@ -62,57 +55,39 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
 
       tezos.setWalletProvider(_wallet);
       setWallet(_wallet);
-    };
-    createWallet();
-  }, [tezos, wallet, networkType]);
-
-  useEffect(() => {
-    const getContracts = async () => {
-      const contractAddress =
-        networkType === Testnet.NetworkType ? Testnet.TezRun : Mainnet.TezRun;
-      console.log('contractAddress', contractAddress);
-      const contract = await tezos.wallet.at(contractAddress);
-      console.log('TezRun Contract', contract);
-      setContract(contract);
-    };
-    connected && getContracts();
-  }, [tezos, connected, networkType]);
+    })();
+  }, [tezos]);
 
   const connectWallet = useCallback(async () => {
-    if (wallet) {
-      try {
-        console.log('Request Permission', networkType, rpcUrl);
-        await wallet.client.requestPermissions({
-          network: {
-            type: networkType,
-            rpcUrl: rpcUrl,
-          },
-          scopes,
-        });
-
-        const address = await wallet.getPKH();
-        console.log('userAddress', address);
-        setAddress(address);
-
-        setConnected(true);
-        return address;
-      } catch (error) {
-        console.error(error);
-        setConnected(false);
-      }
+    if (!wallet) {
+      return Promise.resolve(undefined);
     }
-    return Promise.resolve(undefined);
-  }, [wallet, networkType, rpcUrl]);
+    try {
+      console.log('Request Permission', networkType, rpcUrl);
+      await wallet.client.requestPermissions({
+        network: {
+          type: networkType,
+          rpcUrl: rpcUrl,
+        },
+        scopes,
+      });
 
-  const disconnectWallet = async (): Promise<void> => {
+      const address = await wallet.getPKH();
+      setAddress(address);
+
+      setConnected(true);
+      return address;
+    } catch (error) {
+      setConnected(false);
+    }
+  }, [wallet]);
+
+  const disconnectWallet = useCallback(async () => {
     setConnected(false);
     if (wallet) {
-      //await wallet.client.removeAllAccounts();
-      //await wallet.client.removeAllPeers();
-      await wallet.client.destroy();
-      await wallet.disconnect();
+      await wallet.clearActiveAccount();
     }
-  };
+  }, [wallet]);
 
   return (
     <BeaconContext.Provider
@@ -121,7 +96,6 @@ export const BeaconProvider: React.FC<{ children: ReactNode }> = ({
         wallet,
         connected,
         address,
-        contract,
         rpcUrl,
         networkType,
         connectWallet,
