@@ -1,20 +1,32 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import bs58 from 'bs58';
 import toast from 'react-hot-toast';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Button, CardContent, Grid } from '@mui/material';
 import { RootState } from 'store';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { setLoading, setPlayerId } from 'slices/play';
 
 const SolanaBoard = ({ socket }) => {
   const dispatch = useDispatch();
-  const wallet = useWallet();
-  const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
+  const {
+    wallet,
+    connect,
+    connected: walletConnected,
+    publicKey,
+    signMessage,
+  } = useWallet();
+  const { setVisible } = useWalletModal();
+  const { loading, connected, playerId } = useSelector(
+    (state: RootState) => state.play
+  );
+
+  console.log('wallet', wallet, walletConnected);
 
   const handleJoin = async () => {
     try {
-      const publicKey = wallet.publicKey;
+      console.log('publicKey', publicKey);
       if (!publicKey) {
         toast.error('No key associated with the wallet');
         return;
@@ -32,14 +44,14 @@ const SolanaBoard = ({ socket }) => {
         date: new Date(),
       });
 
-      if (!wallet.signMessage) {
+      if (!signMessage) {
         console.log('Unable to sign using this wallet');
         return;
       }
 
       dispatch(setLoading(true));
 
-      const signed = await wallet.signMessage(encoder.encode(plainText));
+      const signed = await signMessage(encoder.encode(plainText));
       console.log('signature', signed);
 
       const signature = bs58.encode(signed);
@@ -78,15 +90,37 @@ const SolanaBoard = ({ socket }) => {
           </Button>
         </Grid>
         <Grid item sm={2} xs={12}>
-          <Button
-            disabled={loading || !!playerId}
-            type="button"
-            variant="contained"
-            size="large"
-            onClick={handleJoin}
-          >
-            {'Join'}
-          </Button>
+          {!wallet ? (
+            <Button
+              disabled={loading || !!playerId}
+              type="button"
+              variant="contained"
+              size="large"
+              onClick={() => setVisible(true)}
+            >
+              {'Select Wallet'}
+            </Button>
+          ) : !walletConnected ? (
+            <Button
+              disabled={loading || !!playerId}
+              type="button"
+              variant="contained"
+              size="large"
+              onClick={() => connect()}
+            >
+              {'Connect Wallet'}
+            </Button>
+          ) : (
+            <Button
+              disabled={loading || !!playerId}
+              type="button"
+              variant="contained"
+              size="large"
+              onClick={handleJoin}
+            >
+              {'Join'}
+            </Button>
+          )}
         </Grid>
       </Grid>
     </CardContent>
