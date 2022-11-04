@@ -33,7 +33,7 @@ const Play = () => {
   useEffect(() => {
     socket.on('connect', () => {
       console.log('connected');
-      dispatch(setLoading(true));
+      dispatch(setLoading(false));
     });
 
     socket.on('disconnect', () => {

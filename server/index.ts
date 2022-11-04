@@ -1,15 +1,18 @@
 import express, { Express, Request, Response } from "express";
 import next from "next";
 import { Server } from "socket.io";
+import cors from './cors';
 import socketServer from "./server";
 
-const dev = process.env.APP_ENV === 'local';
+const dev = process.env.APP_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const port = process.env.PORT || 3000;
 
 app.prepare().then(() => {
   const server: Express = express();
+
+  server.use(cors);
 
   server.get('*', (req: Request, res: Response) => {
     return handle(req, res);
