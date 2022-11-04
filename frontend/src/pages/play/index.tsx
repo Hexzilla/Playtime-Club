@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
-import bs58 from 'bs58';
 import toast from 'react-hot-toast';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Box, Button, Card, CardContent, Container, Grid } from '@mui/material';
+import { Box, Card, CardContent, Container } from '@mui/material';
 import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
+import { API_BASE_URL } from 'configs';
 import { RootState } from 'store';
 import { setLoading, setPlayerId } from 'slices/play';
 import TezosBoard from '../../components/play/playtime-tezos';
 import SolanaBoard from '../../components/play/playtime-solana';
 
-const socket = io('http://localhost:8000');
+const socket = io(API_BASE_URL);
 
 // const unityConfig = {
 //   loaderUrl: "Build/public.loader.js",
