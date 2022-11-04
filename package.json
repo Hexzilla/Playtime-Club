@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev:server": "ts-node --project tsconfig.server.json server/index.ts",
+    "build": "npm run build:next && npm run build:server",
+    "start": "NODE_ENV=production node dist/index.js",
+    "build:server": "tsc --project tsconfig.server.json",
+    "build:next": "next build"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
@@ -43,11 +45,13 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "@types/express": "^4.17.14",
     "@types/node": "18.11.8",
     "@types/react": "18.0.24",
     "@types/react-dom": "18.0.8",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
+    "ts-node": "^10.9.1",
     "typescript": "4.8.4"
   }
 }
