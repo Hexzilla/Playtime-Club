@@ -2,12 +2,12 @@ import React from 'react';
 import {
   AppBar,
   Box,
-  Button,
+  /*Button,*/
   IconButton,
   Toolbar} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+//import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+//import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Menu as MenuIcon } from '../../icons/menu';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
@@ -27,8 +27,8 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 
 export const DashboardNavbar = (props) => {
   const { onOpenSidebar, ...other } = props;
-  const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
+  //const { connection } = useConnection();
+  //const { publicKey, sendTransaction } = useWallet();
 
   return (
     <>
@@ -65,8 +65,8 @@ export const DashboardNavbar = (props) => {
             onClick={handleConnectWallet}
           >
             {!walletAddress? 'Connect Wallet' : 'Disconnect Wallet'}
-          </Button> */}
-          <WalletMultiButton />
+          </Button>
+          <WalletMultiButton /> */}
         </Toolbar>
       </DashboardNavbarRoot>
     </>
