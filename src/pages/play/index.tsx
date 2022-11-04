@@ -8,13 +8,14 @@ import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
 import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
-import { API_BASE_URL } from 'configs';
+import { BaseUrl } from 'configs';
 import { RootState } from 'store';
 import { setLoading, setPlayerId } from 'slices/play';
 import TezosBoard from '../../components/play/playtime-tezos';
 import SolanaBoard from '../../components/play/playtime-solana';
 
-const socket = io(API_BASE_URL);
+console.log('BaseUrl', BaseUrl)
+const socket = io(BaseUrl);
 
 // const unityConfig = {
 //   loaderUrl: "Build/public.loader.js",
