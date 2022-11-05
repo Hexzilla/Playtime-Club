@@ -4,14 +4,14 @@ import { Server } from "socket.io";
 import cors from './cors';
 import socketServer from "./server";
 
-const dev = process.env.APP_ENV !== 'production';
-console.log('~~~~~~~~~~~~~~~~1')
-const app = next({ dev });
-console.log('~~~~~~~~~~~~~~~~2')
-const handle = app.getRequestHandler();
+const dev = process.env.NODE_ENV !== 'production';
+console.log('~~~~~~~~~~~~~~~~1', dev)
+const port = Number(process.env.PORT || 3000);
+console.log('~~~~~~~~~~~~~~~~2', port)
+const app = next({ dev, port });
 console.log('~~~~~~~~~~~~~~~~3')
-const port = process.env.PORT || 3000;
-console.log('~~~~~~~~~~~~~~~~4', port)
+const handle = app.getRequestHandler();
+console.log('~~~~~~~~~~~~~~~~4')
 
 app.prepare().then(() => {
   console.log('~~~~~~~~~~~~~~~~10')
