@@ -26,7 +26,7 @@ const Play = () => {
   //const wallet = useWallet();
   //const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
-  const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
+  const { connected } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
     socket.on('connect', () => {

@@ -1,6 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
-import { Layout } from './components/layout';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Play from './pages/play';
 
 const App = () => (

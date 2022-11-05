@@ -1,6 +1,6 @@
 import { NetworkType } from "@airgap/beacon-sdk";
 
-export const BaseUrl = process.env.API_URL || 'http://localhost:3000';
+export const BaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export const Admin = "tz1bxwduvRwBhq59FmThGKD5ceDFadr57JTq";
 
