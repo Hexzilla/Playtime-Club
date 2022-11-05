@@ -30,8 +30,7 @@ app.prepare().then(() => {
   /// Open a connection with the specific client
   io.on("connection", socketServer);
 
-  server.listen(port, (err?: any) => {
-    if (err) throw err;
+  http.listen(port, () => {
     console.log('Server is running...')
   });
 });
