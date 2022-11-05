@@ -9,7 +9,7 @@ export const requestSign = (
 ) => {
   const bytes = char2Bytes(message);
   const payloadBytes =
-    '05' + '01' + char2Bytes(bytes.length.toString()) + bytes;
+    '0501' + char2Bytes(bytes.length.toString()) + bytes;
 
   const payload: RequestSignPayloadInput = {
     signingType: SigningType.MICHELINE,

@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Head from 'next/head';
 import toast from 'react-hot-toast';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Box, Card, CardContent, Container } from '@mui/material';
 import { io } from 'socket.io-client';
 //import { Unity, useUnityContext } from "react-unity-webgl";
-import { DashboardLayout } from '../../components/play/dashboard-layout';
 import useInterval from 'hooks/useInterval';
 import { BaseUrl } from 'configs';
 import { RootState } from 'store';
 import { setLoading, setPlayerId } from 'slices/play';
 import TezosBoard from '../../components/play/playtime-tezos';
-import SolanaBoard from '../../components/play/playtime-solana';
+//import SolanaBoard from '../../components/play/playtime-solana';
 
 console.log('BaseUrl', BaseUrl)
 const socket = io(BaseUrl);
@@ -26,7 +23,7 @@ const socket = io(BaseUrl);
 
 const Play = () => {
   const dispatch = useDispatch();
-  const wallet = useWallet();
+  //const wallet = useWallet();
   //const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const { loading, connected, playerId } = useSelector((state: RootState) => state.play);
@@ -72,9 +69,6 @@ const Play = () => {
 
   return (
     <>
-      <Head>
-        <title>Play</title>
-      </Head>
       <Box
         component="main"
         sx={{
@@ -105,9 +99,9 @@ const Play = () => {
           <Card sx={{ mt: 3 }}>
             <TezosBoard socket={socket} />
           </Card>
-          <Card sx={{ mt: 3 }}>
+          {/* <Card sx={{ mt: 3 }}>
             <SolanaBoard socket={socket} />
-          </Card>
+          </Card> */}
           <Card sx={{ mt: 3 }}>
             <CardContent>
               {/* <WidgetPreviewer
@@ -121,7 +115,5 @@ const Play = () => {
     </>
   );
 };
-
-Play.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Play;
