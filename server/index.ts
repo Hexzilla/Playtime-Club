@@ -43,4 +43,5 @@ app.prepare().then(() => {
   http.listen(port, () => {
     console.log('Server is running...')
   });
-});
+})
+.catch(err => console.log(err));
