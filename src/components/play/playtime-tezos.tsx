@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { AbortedBeaconError } from '@airgap/beacon-sdk';
-import { Button, CardContent, Grid } from '@mui/material';
+import { Button, CardContent, Link, Grid } from '@mui/material';
 import { RootState } from 'store';
 import { setLoading } from 'slices/play';
 import useBeacon from 'hooks/useBeacon';
@@ -67,7 +67,15 @@ const TezosBoard = ({ socket }) => {
       <Grid container spacing={3}>
         <Grid item sm={8} xs={12}>
           <div>Playtime</div>
-          <div>You need an Tezos Playtime.club NFT to play. Buy Here</div>
+          <div>You need an Tezos Playtime.club NFT to play. {' '}
+            <Link
+              href={'https://opensea.com'}
+              color="textPrimary"
+              variant="subtitle2"
+            >
+              Buy Here
+            </Link>
+          </div>
         </Grid>
         <Grid item sm={2} xs={6}>
           <Button
