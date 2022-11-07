@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import toast from "react-hot-toast";
@@ -8,6 +8,7 @@ import { RootState } from "store";
 import { setLoading } from "slices/play";
 import useBeacon from "hooks/useBeacon";
 import { requestSign } from "utils/tezos-wallet";
+import RoomDetail from "./room-detail";
 
 const TezosBoard = ({ socket }) => {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const TezosBoard = ({ socket }) => {
   const { loading, connected, playerId, roomId, startTime } = useSelector(
     (state: RootState) => state.play
   );
+  const [showDetail, setShowDetail] = useState(false);
 
   const handleJoin = async () => {
     try {
@@ -97,6 +99,7 @@ const TezosBoard = ({ socket }) => {
             type="button"
             variant="contained"
             size="large"
+            onClick={() => setShowDetail(true)}
           >
             {"Detail"}
           </Button>
@@ -113,6 +116,7 @@ const TezosBoard = ({ socket }) => {
           </Button>
         </Grid>
       </Grid>
+      {showDetail && <RoomDetail onClose={() => setShowDetail(false)} />}
     </CardContent>
   );
 };
