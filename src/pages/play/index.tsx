@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 import useInterval from 'hooks/useInterval';
 import { BaseUrl } from 'configs';
 import { RootState } from 'store';
-import { setLoading, setConnected, setPlayerId } from 'slices/play';
+import * as actions from 'slices/play';
 import TezosBoard from '../../components/play/playtime-tezos';
 //import SolanaBoard from '../../components/play/playtime-solana';
 
@@ -32,21 +32,26 @@ const Play = () => {
     socket.on('connect', () => {
       console.log('connected');
       toast.success('Connected server');
-      dispatch(setConnected(true));
+      dispatch(actions.setConnected(true));
     });
 
     socket.on('disconnect', () => {
       console.log('disconnected');
-      dispatch(setConnected(false));
+      dispatch(actions.setConnected(false));
+      dispatch(actions.setPlayerId(null));
     });
 
     socket.on('PONG', () => {
       console.log('PONG');
     });
 
-    socket.on('JOIN_SUCCESS', (playerId) => {
-      dispatch(setLoading(false));
-      dispatch(setPlayerId(playerId));
+    socket.on('JOIN_SUCCESS', (msg) => {
+      console.log('join-result', msg)
+      const result = JSON.parse(msg);
+      dispatch(actions.setLoading(false));
+      dispatch(actions.setPlayerId(result.playerId));
+      dispatch(actions.setRoomId(result.roomId));
+      dispatch(actions.setStartTime(result.startTime));
       toast.success('You has been joined successfully');
     });
 
