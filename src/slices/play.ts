@@ -1,4 +1,3 @@
-import moment from "moment";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface PlayState {
@@ -6,7 +5,7 @@ interface PlayState {
   connected: boolean;
   playerId: string | null;
   roomId: number | null;
-  startTime: moment.Moment | null;
+  startTime: string | null;
 }
 
 const initialState: PlayState = {
@@ -34,7 +33,8 @@ const slice = createSlice({
       state.roomId = Number(action.payload);
     },
     setStartTime(state, action: PayloadAction<string | null>) {
-      state.startTime = moment(action.payload);
+      console.log('action.payload', action.payload)
+      state.startTime = action.payload;
     },
   },
 });

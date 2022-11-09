@@ -77,7 +77,7 @@ const TezosBoard = ({ socket }) => {
               <div>
                 Playtime{" "}
                 {!!startTime && (
-                  <span>{moment(startTime).format("MM/DD/YYYY HH:MM")}</span>
+                  <span>{moment(startTime).format("DD/MM HH:mm")}</span>
                 )}
               </div>
             </>
