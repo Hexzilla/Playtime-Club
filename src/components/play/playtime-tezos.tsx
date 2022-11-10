@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import { Button, CardContent, Link, Grid } from "@mui/material";
 import { RootState } from "store";
 import { setLoading } from "slices/play";
 import useBeacon from "hooks/useBeacon";
+import useInterval from "hooks/useInterval";
 import { requestSign } from "utils/tezos-wallet";
 import RoomDetail from "./room-detail";
 
@@ -21,6 +22,7 @@ const TezosBoard = ({ socket }) => {
   const { loading, connected, playerId, roomId, startTime } = useSelector(
     (state: RootState) => state.play
   );
+  const [remainTime, setRemainTime] = useState(-1);
   const [showDetail, setShowDetail] = useState(false);
 
   const connect = async () => {
@@ -97,6 +99,21 @@ const TezosBoard = ({ socket }) => {
     }
   };
 
+  useEffect(() => {
+    if (startTime) {
+      const remainTime = moment(startTime).diff(moment(), 's');
+      console.log('remainTime', remainTime)
+      setRemainTime(remainTime);
+    }
+  }, [startTime])
+
+  // Count down
+  useInterval(() => {
+    if (remainTime > 0) {
+      setRemainTime(remainTime - 1);
+    }
+  }, 1000)
+
   return (
     <CardContent>
       <Grid container spacing={3}>
@@ -110,6 +127,11 @@ const TezosBoard = ({ socket }) => {
                 Playtime{" "}
                 {!!startTime && (
                   <span>{moment(startTime).format("DD/MM HH:mm")}</span>
+                )}
+              </div>
+              <div>                
+                {remainTime >= 0 && (
+                  <span>Remain Time: {moment.utc(remainTime * 1000).format("HH:mm:ss")}</span>
                 )}
               </div>
             </>
