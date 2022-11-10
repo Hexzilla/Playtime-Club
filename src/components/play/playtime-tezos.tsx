@@ -12,17 +12,42 @@ import RoomDetail from "./room-detail";
 
 const TezosBoard = ({ socket }) => {
   const dispatch = useDispatch();
-  const { wallet, address, connectWallet } = useBeacon();
+  const {
+    wallet,
+    publicKey,
+    address: walletAddress,
+    connectWallet,
+  } = useBeacon();
   const { loading, connected, playerId, roomId, startTime } = useSelector(
     (state: RootState) => state.play
   );
   const [showDetail, setShowDetail] = useState(false);
 
+  const connect = async () => {
+    if (!walletAddress) {
+      const permissions = await connectWallet();
+      if (!permissions) {
+        return null;
+      }
+
+      const _publicKey = permissions.accountInfo.publicKey;
+      const _walletAddress = permissions.address;
+      return [_publicKey, _walletAddress];
+    }
+    return Promise.resolve([publicKey, walletAddress]);
+  };
+
   const handleJoin = async () => {
     try {
       // Connect wallet
-      const walletAddress = address ? address : await connectWallet();
-      if (!walletAddress || !wallet) {
+      const connectResult = await connect();
+      if (!connectResult) {
+        toast.error("Failed to connect wallet");
+        return;
+      }
+
+      const [publicKey, walletAddress] = connectResult;
+      if (!walletAddress) {
         toast.error("Please connect your wallet");
         return;
       }
@@ -36,21 +61,28 @@ const TezosBoard = ({ socket }) => {
       // Update loading state.
       dispatch(setLoading(true));
 
+      const dappUrl = "playtime.com";
       const payload: string = [
         "Tezos Signed Message:",
-        "playtime-tezos.com",
+        dappUrl,
         new Date().toISOString(),
-        "Join Room",
-        address,
+        `${dappUrl} would like to join room with ${walletAddress}`,
       ].join(" ");
 
-      const signed = await requestSign(wallet, address!, payload);
+      const signed = await requestSign(wallet!, walletAddress!, payload);
       console.log("signed", signed);
       if (signed) {
         const { signature } = signed;
 
         setTimeout(() => {
-          socket?.emit("JOIN", signature);
+          const request = {
+            network: "tez",
+            publicKey,
+            address: walletAddress,
+            message: payload,
+            signature,
+          };
+          socket?.emit("JOIN", JSON.stringify(request));
         }, 1);
       }
     } catch (err: any) {

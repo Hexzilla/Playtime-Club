@@ -56,6 +56,11 @@ const Play = () => {
       toast.success('You has been joined successfully');
     });
 
+    socket.on('START_GAME', (msg) => {
+      console.log('start-game', msg);
+      toast.success('Game started');
+    });
+
     socket.connect();
 
     return () => {
