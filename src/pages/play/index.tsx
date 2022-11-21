@@ -25,7 +25,7 @@ const Play = () => {
   const dispatch = useDispatch();
   //const wallet = useWallet();
   const unityContext = useUnityContext(unityConfig);
-  const { sendMessage, addEventListener, removeEventListener } = unityContext;
+  //const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const { connected } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
@@ -96,7 +96,6 @@ const Play = () => {
                 minHeight: '540px',
               }}
             >
-              Unity Component
               <Unity
                 unityProvider={unityContext.unityProvider}
                 style={{
