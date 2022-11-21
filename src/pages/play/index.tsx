@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { Box, Card, CardContent, Container } from '@mui/material';
 import { io } from 'socket.io-client';
-//import { Unity, useUnityContext } from "react-unity-webgl";
+import { Unity, useUnityContext } from "react-unity-webgl";
 import useInterval from 'hooks/useInterval';
 import { BaseUrl } from 'configs';
 import { RootState } from 'store';
@@ -14,18 +14,18 @@ import TezosBoard from '../../components/play/playtime-tezos';
 console.log('BaseUrl', BaseUrl)
 const socket = io(BaseUrl);
 
-// const unityConfig = {
-//   loaderUrl: "Build/public.loader.js",
-//   dataUrl: "Build/public.data",
-//   frameworkUrl: "Build/public.framework.js",
-//   codeUrl: "Build/public.wasm",
-// };
+const unityConfig = {
+  loaderUrl: "Build/public.loader.js",
+  dataUrl: "Build/public.data",
+  frameworkUrl: "Build/public.framework.js",
+  codeUrl: "Build/public.wasm",
+};
 
 const Play = () => {
   const dispatch = useDispatch();
   //const wallet = useWallet();
-  //const unityContext = useUnityContext(unityConfig);
-  //const { sendMessage, addEventListener, removeEventListener } = unityContext;
+  const unityContext = useUnityContext(unityConfig);
+  const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const { connected } = useSelector((state: RootState) => state.play);
 
   useEffect(() => {
@@ -97,14 +97,14 @@ const Play = () => {
               }}
             >
               Unity Component
-              {/* <Unity
+              <Unity
                 unityProvider={unityContext.unityProvider}
                 style={{
                   height: 540,
                   width: 950,
                   background: "#555",
                 }}
-              /> */}
+              />
             </CardContent>
           </Card>
           <Card sx={{ mt: 3 }}>
