@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
+import { redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { AbortedBeaconError } from "@airgap/beacon-sdk";
 import { Box, Button, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { io } from "socket.io-client";
 import { BaseUrl } from "configs";
 import { RootState } from "store";
 import * as actions from "slices/play";
+import { requestSign } from "utils/tezos-wallet";
 import { MainLayout } from "components/main-layout";
 import CountDown from "components/countdown";
+import useBeacon from "hooks/useBeacon";
 
 const StyledButton = styled(Button)(() => ({
   width: 160,
@@ -18,7 +22,8 @@ const socket = io(BaseUrl);
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { startTime } = useSelector((state: RootState) => state.play);
+  const { connected, startTime } = useSelector((state: RootState) => state.play);
+  const { wallet, publicKey, address: walletAddress } = useBeacon();
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -46,6 +51,7 @@ const Home = () => {
       dispatch(actions.setRoomId(result.roomId));
       dispatch(actions.setStartTime(result.startTime));
       toast.success("You has been joined successfully");
+      setTimeout(() => redirect('/play'), 1000);
     });
 
     socket.on("ROOM_INFO", (msg) => {
@@ -70,6 +76,58 @@ const Home = () => {
     };
   }, [dispatch]);
 
+  const joinGame = async () => {
+    try {
+      if (!walletAddress) {
+        toast.error("Please connect your wallet");
+        return;
+      }
+
+      // Check if socket is connected.
+      if (!connected) {
+        toast.error("Cannot connect server!");
+        return;
+      }
+
+      // Update loading state.
+      dispatch(actions.setLoading(true));
+
+      const dappUrl = "playtime.com";
+      const payload: string = [
+        "Tezos Signed Message:",
+        dappUrl,
+        new Date().toISOString(),
+        `${dappUrl} would like to join room with ${walletAddress}`,
+      ].join(" ");
+
+      const signed = await requestSign(wallet!, walletAddress!, payload);
+      console.log("signed", signed);
+      if (signed) {
+        const { signature } = signed;
+
+        setTimeout(() => {
+          const request = {
+            network: "tez",
+            publicKey,
+            address: walletAddress,
+            message: payload,
+            signature,
+          };
+          socket?.emit("JOIN", JSON.stringify(request));
+        }, 1);
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err instanceof AbortedBeaconError) {
+        toast.error(err.description);
+      } else {
+        toast.error("Something went wrong!");
+      }
+    } finally {
+      dispatch(actions.setLoading(false));
+    }
+  };
+
   return (
     <MainLayout>
       <div style={{ minHeight: "100vh" }}>
@@ -78,7 +136,11 @@ const Home = () => {
           <Grid item mt={8} xs={12}>
             <Grid container justifyContent="center" spacing={1}>
               <Box sx={{ mt: 1 }}>
-                <StyledButton size="large" variant="outlined">
+                <StyledButton
+                  size="large"
+                  variant="outlined"
+                  onClick={joinGame}
+                >
                   JOIN GAME
                 </StyledButton>
               </Box>
