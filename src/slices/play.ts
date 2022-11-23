@@ -25,6 +25,9 @@ const slice = createSlice({
     },
     setConnected(state, action: PayloadAction<boolean>) {
       state.connected = action.payload;
+      if (!state.connected) {
+        state.playerId = null;
+      }
     },
     setPlayerId(state, action: PayloadAction<string | null>) {
       state.playerId = action.payload;

@@ -2,17 +2,11 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { Box, Card, CardContent, Container } from '@mui/material';
-import { io } from 'socket.io-client';
 import { Unity, useUnityContext } from "react-unity-webgl";
-import useInterval from 'hooks/useInterval';
-import { BaseUrl } from 'configs';
 import { RootState } from 'store';
 import * as actions from 'slices/play';
-import TezosBoard from '../../components/play/playtime-tezos';
-//import SolanaBoard from '../../components/play/playtime-solana';
-
-console.log('BaseUrl', BaseUrl)
-const socket = io(BaseUrl);
+import useSocket from 'hooks/useSocket';
+import TezosBoard from 'components/play/playtime-tezos';
 
 const unityConfig = {
   loaderUrl: "Build/public.loader.js",
@@ -27,56 +21,18 @@ const Play = () => {
   const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
   const { connected } = useSelector((state: RootState) => state.play);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected');
-      toast.success('Connected server');
-      dispatch(actions.setConnected(true));
-    });
-
-    socket.on('disconnect', () => {
-      console.log('disconnected');
-      dispatch(actions.setConnected(false));
-      dispatch(actions.setPlayerId(null));
-    });
-
-    socket.on('PONG', () => {
-      console.log('PONG');
-    });
-
-    socket.on('JOIN_SUCCESS', (msg) => {
-      console.log('join-result', msg)
-      const result = JSON.parse(msg);
-      dispatch(actions.setLoading(false));
-      dispatch(actions.setPlayerId(result.playerId));
-      dispatch(actions.setRoomId(result.roomId));
-      dispatch(actions.setStartTime(result.startTime));
-      toast.success('You has been joined successfully');
-    });
-
     socket.on('START_GAME', (msg) => {
       console.log('start-game', msg);
       toast.success('Game started');
     });
 
-    socket.connect();
-
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('PONG');
-      socket.off('JOIN_SUCCESS');
+      socket.off('START_GAME');
     };
   }, [dispatch]);
-
-  const sendPing = () => {
-    connected && socket.emit('PING');
-  };
-
-  useInterval(() => {
-    sendPing();
-  }, 5000);
 
   return (
     <>

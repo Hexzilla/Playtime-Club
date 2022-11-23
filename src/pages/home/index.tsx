@@ -24,30 +24,13 @@ const Home = () => {
   const { wallet, publicKey, address: walletAddress } = useBeacon();
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("connected");
-      toast.success("Connected server");
-      dispatch(actions.setConnected(true));
-      socket.emit("GET_ROOM");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("disconnected");
-      dispatch(actions.setConnected(false));
-      dispatch(actions.setPlayerId(null));
-    });
-
-    socket.on("PONG", () => {
-      console.log("PONG");
-    });
-
     socket.on("JOIN_SUCCESS", (msg) => {
-      console.log("join-result", msg);
       const result = JSON.parse(msg);
       dispatch(actions.setLoading(false));
       dispatch(actions.setPlayerId(result.playerId));
       dispatch(actions.setRoomId(result.roomId));
       dispatch(actions.setStartTime(result.startTime));
+      
       toast.success("You has been joined successfully");
       setTimeout(() => redirect('/play'), 1000);
     });
@@ -59,18 +42,9 @@ const Home = () => {
       dispatch(actions.setStartTime(room.startTime));
     });
 
-    socket.on("START_GAME", (msg) => {
-      console.log("start-game", msg);
-      toast.success("Game started");
-    });
-
-    socket.connect();
-
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("PONG");
       socket.off("JOIN_SUCCESS");
+      socket.off("ROOM_INFO");
     };
   }, [dispatch]);
 
