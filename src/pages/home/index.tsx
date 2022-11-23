@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { AbortedBeaconError } from "@airgap/beacon-sdk";
@@ -19,6 +20,7 @@ const StyledButton = styled(Button)(() => ({
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { connected, startTime } = useSelector(
     (state: RootState) => state.play
   );
@@ -31,7 +33,7 @@ const Home = () => {
       dispatch(setLoading(false));
 
       toast.success("You has been joined successfully");
-      redirect("/play");
+      navigate("/play");
     });
 
     socket.on("ROOM_INFO", (msg) => {
