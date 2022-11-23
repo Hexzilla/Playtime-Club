@@ -14,7 +14,7 @@ const Item = styled(Paper)(({ theme }) => ({
   width: 100,
 }));
 
-export default function CountDown({ startTime }) {
+export const CountDown = ({ startTime }) => {
   const [remainTime, setRemainTime] = useState(-1);
   const [remainHours, setRemainHours] = useState('00');
   const [remainMinutes, setRemainMinutes] = useState('00');

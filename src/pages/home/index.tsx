@@ -5,24 +5,22 @@ import toast from "react-hot-toast";
 import { AbortedBeaconError } from "@airgap/beacon-sdk";
 import { Box, Button, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { io } from "socket.io-client";
-import { BaseUrl } from "configs";
 import { RootState } from "store";
 import * as actions from "slices/play";
+import useBeacon from "hooks/useBeacon";
+import useSocket from "hooks/useSocket";
 import { requestSign } from "utils/tezos-wallet";
 import { MainLayout } from "components/main-layout";
-import CountDown from "components/countdown";
-import useBeacon from "hooks/useBeacon";
+import { CountDown } from "components/countdown";
 
 const StyledButton = styled(Button)(() => ({
   width: 160,
 }));
 
-const socket = io(BaseUrl);
-
 const Home = () => {
   const dispatch = useDispatch();
   const { connected, startTime } = useSelector((state: RootState) => state.play);
+  const { socket } = useSocket();
   const { wallet, publicKey, address: walletAddress } = useBeacon();
 
   useEffect(() => {
