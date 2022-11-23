@@ -1,6 +1,8 @@
-import * as React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import moment from "moment";
+import useInterval from "hooks/useInterval";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -12,14 +14,43 @@ const Item = styled(Paper)(({ theme }) => ({
   width: 100,
 }));
 
-export default function SpacingGrid() {
+export default function CountDown({ startTime }) {
+  const [remainTime, setRemainTime] = useState(-1);
+  const [remainHours, setRemainHours] = useState('00');
+  const [remainMinutes, setRemainMinutes] = useState('00');
+  const [remainSeconds, setRemainSeconds] = useState('00');
+
+  useEffect(() => {
+    if (startTime) {
+      const remainTime = moment(startTime).diff(moment(), 's');
+      setRemainTime(remainTime);
+    }
+  }, [startTime]);
+
+  useInterval(() => {
+    if (remainTime > 0) {
+      const updatedTime = remainTime - 1;
+      setRemainTime(updatedTime);
+      
+      const time = moment.utc(remainTime * 1000).format("HH:mm:ss");
+      const tokens = time.split(':');
+      setRemainHours(tokens[0])
+      setRemainMinutes(tokens[1])
+      setRemainSeconds(tokens[2])
+    } else {
+      setRemainHours('00')
+      setRemainMinutes('00')
+      setRemainSeconds('00')
+    }
+  }, 1000);
+
   return (
     <Grid item xs={12}>
       <Grid container justifyContent="center" spacing={1}>
         <Grid item>
           <Item>
             <Typography variant="h2" gutterBottom>
-              00
+              {remainHours}
             </Typography>
             <Typography variant="h6" gutterBottom>
               HRS
@@ -29,7 +60,7 @@ export default function SpacingGrid() {
         <Grid item>
           <Item>
             <Typography variant="h2" gutterBottom>
-              00
+              {remainMinutes}
             </Typography>
             <Typography variant="h6" gutterBottom>
               MIN
@@ -39,7 +70,7 @@ export default function SpacingGrid() {
         <Grid item>
           <Item>
             <Typography variant="h2" gutterBottom>
-              00
+              {remainSeconds}
             </Typography>
             <Typography variant="h6" gutterBottom>
               SEC
