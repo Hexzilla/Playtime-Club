@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import {
   AppBar,
   Box,
-  Button,
   Container,
   IconButton,
   Link,
@@ -11,7 +10,7 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "../icons/menu";
 import { Logo } from "./logo";
-import { ConnectButton } from './connect-button';
+import { ConnectButton } from "./connect-button";
 
 export const MainNavbar = (props) => {
   const { onOpenSidebar } = props;

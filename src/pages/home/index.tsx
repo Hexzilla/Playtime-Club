@@ -6,7 +6,7 @@ import { AbortedBeaconError } from "@airgap/beacon-sdk";
 import { Box, Button, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { RootState } from "store";
-import * as actions from "slices/play";
+import { setLoading, setJoinedRoom, setOpenRoom } from "slices/play";
 import useBeacon from "hooks/useBeacon";
 import useSocket from "hooks/useSocket";
 import { requestSign } from "utils/tezos-wallet";
@@ -19,35 +19,31 @@ const StyledButton = styled(Button)(() => ({
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { connected, startTime } = useSelector((state: RootState) => state.play);
+  const { connected, startTime } = useSelector(
+    (state: RootState) => state.play
+  );
   const { socket } = useSocket();
   const { wallet, publicKey, address: walletAddress } = useBeacon();
 
   useEffect(() => {
     socket.on("JOIN_SUCCESS", (msg) => {
-      const result = JSON.parse(msg);
-      console.log('join-result', result)
-      dispatch(actions.setLoading(false));
-      dispatch(actions.setPlayerId(result.playerId));
-      dispatch(actions.setRoomId(result.roomId));
-      dispatch(actions.setStartTime(result.startTime));
-      
+      dispatch(setJoinedRoom(msg));
+      dispatch(setLoading(false));
+
       toast.success("You has been joined successfully");
-      redirect('/play');
+      redirect("/play");
     });
 
     socket.on("ROOM_INFO", (msg) => {
-      const room = JSON.parse(msg);
-      console.log("room-info", room);
-      dispatch(actions.setRoomId(room.id));
-      dispatch(actions.setStartTime(room.startTime));
+      console.log("room-info", msg);
+      dispatch(setOpenRoom(msg));
     });
 
     return () => {
       socket.off("JOIN_SUCCESS");
       socket.off("ROOM_INFO");
     };
-  }, [dispatch]);
+  }, [dispatch, socket]);
 
   const joinGame = async () => {
     try {
@@ -63,7 +59,7 @@ const Home = () => {
       }
 
       // Update loading state.
-      dispatch(actions.setLoading(true));
+      dispatch(setLoading(true));
 
       const dappUrl = "playtime.com";
       const payload: string = [
@@ -97,7 +93,7 @@ const Home = () => {
         toast.error("Something went wrong!");
       }
     } finally {
-      dispatch(actions.setLoading(false));
+      dispatch(setLoading(false));
     }
   };
 

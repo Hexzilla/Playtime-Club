@@ -36,8 +36,18 @@ const slice = createSlice({
       state.roomId = Number(action.payload);
     },
     setStartTime(state, action: PayloadAction<string | null>) {
-      console.log('action.payload', action.payload)
       state.startTime = action.payload;
+    },
+    setOpenRoom(state, action: PayloadAction<string | null>) {
+      const item = JSON.parse(action.payload!);
+      state.roomId = item.id;
+      state.startTime = item.startTime;
+    },
+    setJoinedRoom(state, action: PayloadAction<string | null>) {
+      const item = JSON.parse(action.payload!);
+      state.playerId = item.playerId;
+      state.roomId = item.roomId;
+      state.startTime = item.startTime;
     },
   },
 });
@@ -50,4 +60,6 @@ export const {
   setPlayerId,
   setRoomId,
   setStartTime,
+  setJoinedRoom,
+  setOpenRoom,
 } = slice.actions;

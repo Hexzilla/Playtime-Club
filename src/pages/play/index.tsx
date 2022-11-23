@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch/*, useSelector*/ } from "react-redux";
 import toast from "react-hot-toast";
 import { Box, Card, CardContent, Container } from "@mui/material";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { RootState } from "store";
-import * as actions from "slices/play";
+//import { RootState } from "store";
 import useSocket from "hooks/useSocket";
+import { MainLayout } from "components/main-layout";
 import TezosBoard from "components/play/playtime-tezos";
 
 const unityConfig = {
@@ -20,7 +20,7 @@ const Play = () => {
   //const wallet = useWallet();
   const unityContext = useUnityContext(unityConfig);
   //const { sendMessage, addEventListener, removeEventListener } = unityContext;
-  const { connected } = useSelector((state: RootState) => state.play);
+  //const { connected } = useSelector((state: RootState) => state.play);
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -32,10 +32,10 @@ const Play = () => {
     return () => {
       socket.off("START_GAME");
     };
-  }, [dispatch]);
+  }, [dispatch, socket]);
 
   return (
-    <>
+    <MainLayout>
       <Box
         component="main"
         sx={{
@@ -78,7 +78,7 @@ const Play = () => {
           </Card>
         </Container>
       </Box>
-    </>
+    </MainLayout>
   );
 };
 
