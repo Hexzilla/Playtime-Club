@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "../icons/menu";
 import { Logo } from "./logo";
+import { ConnectButton } from './connect-button';
 
 export const MainNavbar = (props) => {
   const { onOpenSidebar } = props;
@@ -29,18 +30,16 @@ export const MainNavbar = (props) => {
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ minHeight: 64 }}>
           <NavLink to="/">
-            <a>
-              <Logo
-                sx={{
-                  display: {
-                    md: "inline",
-                    xs: "none",
-                  },
-                  height: 40,
-                  width: 40,
-                }}
-              />
-            </a>
+            <Logo
+              sx={{
+                display: {
+                  md: "inline",
+                  xs: "none",
+                },
+                height: 40,
+                width: 40,
+              }}
+            />
           </NavLink>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
@@ -63,22 +62,22 @@ export const MainNavbar = (props) => {
               },
             }}
           >
-            <NavLink to="/dashboard">
+            <NavLink to="/play">
               <Link color="textSecondary" underline="none" variant="subtitle2">
-                Live Demo
+                Play
               </Link>
             </NavLink>
-            <NavLink to="/browse">
+            <NavLink to="/rank">
               <Link
                 color="textSecondary"
                 sx={{ ml: 2 }}
                 underline="none"
                 variant="subtitle2"
               >
-                Components
+                Rank
               </Link>
             </NavLink>
-            <NavLink to="/docs/welcome">
+            <NavLink to="/nft">
               <Link
                 color="textSecondary"
                 component="a"
@@ -86,19 +85,10 @@ export const MainNavbar = (props) => {
                 underline="none"
                 variant="subtitle2"
               >
-                Documentation
+                NFT
               </Link>
             </NavLink>
-            <Button
-              component="a"
-              href="https://material-ui.com/store/items/devias-kit-pro"
-              size="medium"
-              sx={{ ml: 2 }}
-              target="_blank"
-              variant="contained"
-            >
-              Buy Now
-            </Button>
+            <ConnectButton />
           </Box>
         </Toolbar>
       </Container>
