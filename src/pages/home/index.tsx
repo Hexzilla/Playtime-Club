@@ -26,13 +26,14 @@ const Home = () => {
   useEffect(() => {
     socket.on("JOIN_SUCCESS", (msg) => {
       const result = JSON.parse(msg);
+      console.log('join-result', result)
       dispatch(actions.setLoading(false));
       dispatch(actions.setPlayerId(result.playerId));
       dispatch(actions.setRoomId(result.roomId));
       dispatch(actions.setStartTime(result.startTime));
       
       toast.success("You has been joined successfully");
-      setTimeout(() => redirect('/play'), 1000);
+      redirect('/play');
     });
 
     socket.on("ROOM_INFO", (msg) => {

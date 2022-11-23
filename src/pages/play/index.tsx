@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import toast from 'react-hot-toast';
-import { Box, Card, CardContent, Container } from '@mui/material';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { Box, Card, CardContent, Container } from "@mui/material";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { RootState } from 'store';
-import * as actions from 'slices/play';
-import useSocket from 'hooks/useSocket';
-import TezosBoard from 'components/play/playtime-tezos';
+import { RootState } from "store";
+import * as actions from "slices/play";
+import useSocket from "hooks/useSocket";
+import TezosBoard from "components/play/playtime-tezos";
 
 const unityConfig = {
   loaderUrl: "Build/public.loader.js",
@@ -24,13 +24,13 @@ const Play = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    socket.on('START_GAME', (msg) => {
-      console.log('start-game', msg);
-      toast.success('Game started');
+    socket.on("START_GAME", (msg) => {
+      console.log("start-game", msg);
+      toast.success("Game started");
     });
 
     return () => {
-      socket.off('START_GAME');
+      socket.off("START_GAME");
     };
   }, [dispatch]);
 
@@ -47,9 +47,9 @@ const Play = () => {
           <Card>
             <CardContent
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                minHeight: '540px',
+                display: "flex",
+                justifyContent: "center",
+                minHeight: "540px",
               }}
             >
               <Unity
