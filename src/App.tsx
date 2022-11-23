@@ -1,16 +1,17 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/home';
-import Play from './pages/play';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MainLayout } from "components/main-layout";
+import Home from "./pages/home";
+import Play from "./pages/play";
 
 const App = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route index element={<Home />} />
-      <Route path="play" element={<Play />} />
-    </Routes>
-  </BrowserRouter>
+  
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="play" element={<Play />} />
+      </Routes>
+    </BrowserRouter>
 );
 
 export default App;
-
